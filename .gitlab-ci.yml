@@ -1,5 +1,5 @@
 variables:
-  PIPELINE_RUNNER: registry.gitlab.com/darklab2/darklab_pipeliner/darklab-pipeliner:kubectl-v1.0.3
+  PIPELINE_RUNNER: darkwind8/builder-docker-kubectl:v1.0.1
 
 stages:
   - deploy-gitea
