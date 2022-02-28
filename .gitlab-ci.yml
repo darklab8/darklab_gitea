@@ -14,4 +14,3 @@ deploy-gitea:
     - ./generate_ssl.sh
     - cd ..
     - python3 install.py --gitea_password="$gitea_password"
-    - python3 install2.py
