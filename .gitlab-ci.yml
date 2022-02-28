@@ -13,5 +13,5 @@ deploy-gitea:
     - cd k8s/gitea/files;
     - ./generate_ssl.sh
     - cd ..
-    - python3 install --gitea_password="$gitea_password"
+    - python3 install.py --gitea_password="$gitea_password"
     - python3 install2.py
