@@ -1,0 +1,13 @@
+gitea:
+  admin:
+    # password: SUPER_SECRET!
+    username: "dd84ai"
+    email: "dd84ai@gmail.com"
+
+  config:
+    service:
+      SHOW_REGISTRATION_BUTTON: false
+      DISABLE_REGISTRATION: true
+
+    server:
+      SSH_DOMAIN: gitea-darklab

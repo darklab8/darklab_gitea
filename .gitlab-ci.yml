@@ -1,0 +1,17 @@
+variables:
+  PIPELINE_RUNNER: registry.gitlab.com/darklab2/darklab_pipeliner/darklab-pipeliner:kubectl-v1.0.3
+
+stages:
+  - deploy-gitea
+
+deploy-gitea:
+  image: ${PIPELINE_RUNNER}
+  stage: deploy-gitea
+  script:
+    - mkdir ~/.kube
+    - echo "${kubectl_config}" > ~/.kube/config
+    - cd k8s/gitea/files;
+    - ./generate_ssl.sh
+    - cd ..
+    - python3 install --gitea_password="$gitea_password"
+    - python3 install2.py

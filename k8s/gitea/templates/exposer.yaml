@@ -1,0 +1,101 @@
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: shared-conf
+data:
+  default.conf: |
+    upstream backend {
+      server gitea-http:3000;
+    }
+
+    server {
+      listen 80 ssl;
+      listen [::]:80 ssl;
+
+      server_tokens off;
+
+      ssl_certificate /etc/nginx/ssl.crt;
+      ssl_certificate_key /etc/nginx/ssl.key;
+
+      location / {
+        proxy_pass http://backend;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+        proxy_redirect off;
+
+      }
+    }
+  ssl.crt: |-
+{{ .Files.Get "files/ssl.crt" | indent 4}}
+  ssl.key: |-
+{{ .Files.Get "files/ssl.key" | indent 4}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app.kubernetes.io/name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nginx
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: nginx
+    spec:
+      volumes:
+        - name: sharedconfigs
+          configMap:
+            name: shared-conf
+            defaultMode: 0777
+      containers:
+      - name: nginx
+        image: nginx:1.21.4-alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: sharedconfigs
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: default.conf
+        - name: sharedconfigs
+          mountPath: /etc/nginx/ssl.crt
+          subPath: ssl.crt
+        - name: sharedconfigs
+          mountPath: /etc/nginx/ssl.key
+          subPath: ssl.key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-https
+spec:
+  type: NodePort
+  ports:
+    - name: https
+      port: 80
+      targetPort: 80
+      nodePort: 30003
+  selector:
+   app.kubernetes.io/name: nginx
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+      nodePort: 30001
+    - name: ssh
+      port: 22
+      targetPort: 22
+      nodePort: 30002
+  selector:
+    statefulset.kubernetes.io/pod-name: gitea-0
