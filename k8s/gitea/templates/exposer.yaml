@@ -78,7 +78,7 @@ spec:
     - name: https
       port: 80
       targetPort: 80
-      nodePort: 30003
+      nodePort: 30043
   selector:
    app.kubernetes.io/name: nginx
 ---
@@ -92,10 +92,10 @@ spec:
     - name: http
       port: 3000
       targetPort: 3000
-      nodePort: 30001
+      nodePort: 30041
     - name: ssh
       port: 22
       targetPort: 22
-      nodePort: 30002
+      nodePort: 30042
   selector:
     statefulset.kubernetes.io/pod-name: gitea-0
