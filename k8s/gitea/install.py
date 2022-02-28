@@ -20,4 +20,4 @@ my_parser.add_argument('--gitea_password',
 # Execute the parse_args() method
 args = my_parser.parse_args()
 
-shell(f'helm upgrade -f gitea.yaml --install --create-namespace --namespace gitea gitea gitea-charts/gitea --set gitea.admin.password="{args.gitea_password}"')
+shell(f'helm upgrade --install --create-namespace --namespace gitea gitea . --set gitea.gitea.admin.password="{args.gitea_password}"')
